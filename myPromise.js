@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:31
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-25 16:45:28
+ * @LastEditTime: 2022-03-25 23:20:57
  * @Description: file content
  */
 
@@ -53,16 +53,30 @@ class MyPromise {
   };
 
   then(successCallback, failCallback) {
-    // 判断状态
-    if (this.status === FULFILLED) {
-      successCallback(this.value);
-    } else if (this.status === REJECTED) {
-      failCallback(this.reason);
-    } else {
-      // 等待状态，将成功和失败的回调存储起来
-      this.successCallback.push(successCallback);
-      this.failCallback.push(failCallback);
-    }
+    let promise = new MyPromise((reslove, reject) => {
+      // 判断状态
+      if (this.status === FULFILLED) {
+        let x = successCallback(this.value);
+        reslovePromise(x, reslove, reject);
+      } else if (this.status === REJECTED) {
+        failCallback(this.reason);
+      } else {
+        // 等待状态，将成功和失败的回调存储起来
+        this.successCallback.push(successCallback);
+        this.failCallback.push(failCallback);
+      }
+    });
+    return promise;
   }
 }
+
+function reslovePromise(x, reslove, reject) {
+  if (x instanceof MyPromise) {
+    // x.then((value)=>{reslove(value)},(reason)=>{reject(reason)})
+    x.then(reslove, reject);
+  } else {
+    reslove(x);
+  }
+}
+
 module.exports = MyPromise;
