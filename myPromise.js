@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:31
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-25 16:30:02
+ * @LastEditTime: 2022-03-25 16:45:28
  * @Description: file content
  */
 
@@ -22,9 +22,9 @@ class MyPromise {
   // 失败的原因
   reason = undefined;
   // 成功的回调
-  successCallback = undefined;
+  successCallback = [];
   // 失败的回调
-  failCallback = undefined;
+  failCallback = [];
 
   reslove = (value) => {
     if (this.status !== PENDING) return;
@@ -33,7 +33,10 @@ class MyPromise {
     // 保存成功的值
     this.value = value;
     // 如果有成功的回调，则调用
-    this.successCallback && this.successCallback(this.value);
+    // this.successCallback && this.successCallback(this.value);
+    while (this.successCallback.length) {
+      this.successCallback.shift()(this.value);
+    }
   };
 
   reject = (reason) => {
@@ -43,7 +46,10 @@ class MyPromise {
     // 保存失败的原因
     this.reason = reason;
     // 如果有失败的回调，则调用
-    this.failCallback && this.failCallback(this.reason);
+    // this.failCallback && this.failCallback(this.reason);
+    while (this.failCallback.length) {
+      this.failCallback.shift()(this.reason);
+    }
   };
 
   then(successCallback, failCallback) {
@@ -54,8 +60,8 @@ class MyPromise {
       failCallback(this.reason);
     } else {
       // 等待状态，将成功和失败的回调存储起来
-      this.successCallback = successCallback;
-      this.failCallback = failCallback;
+      this.successCallback.push(successCallback);
+      this.failCallback.push(failCallback);
     }
   }
 }
