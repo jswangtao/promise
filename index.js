@@ -9,11 +9,11 @@ const myPromise = require("./myPromise");
 
 let p1 = new myPromise((reslove, reject) => {
   console.log("🚀🚀🚀wimi======>>>1111");
-  reslove("成功");
+  // reslove("成功");
   // reject("失败");
-  // setTimeout(() => {
-  //   reslove("成功");
-  // }, 2000);
+  setTimeout(() => {
+    reslove("成功");
+  }, 2000);
 });
 
 p1.then(

@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:31
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-25 16:33:07
+ * @LastEditTime: 2022-03-25 16:30:02
  * @Description: file content
  */
 
@@ -21,6 +21,10 @@ class MyPromise {
   value = undefined;
   // 失败的原因
   reason = undefined;
+  // 成功的回调
+  successCallback = undefined;
+  // 失败的回调
+  failCallback = undefined;
 
   reslove = (value) => {
     if (this.status !== PENDING) return;
@@ -28,6 +32,8 @@ class MyPromise {
     this.status = FULFILLED;
     // 保存成功的值
     this.value = value;
+    // 如果有成功的回调，则调用
+    this.successCallback && this.successCallback(this.value);
   };
 
   reject = (reason) => {
@@ -36,6 +42,8 @@ class MyPromise {
     this.status = REJECTED;
     // 保存失败的原因
     this.reason = reason;
+    // 如果有失败的回调，则调用
+    this.failCallback && this.failCallback(this.reason);
   };
 
   then(successCallback, failCallback) {
@@ -44,6 +52,10 @@ class MyPromise {
       successCallback(this.value);
     } else if (this.status === REJECTED) {
       failCallback(this.reason);
+    } else {
+      // 等待状态，将成功和失败的回调存储起来
+      this.successCallback = successCallback;
+      this.failCallback = failCallback;
     }
   }
 }
