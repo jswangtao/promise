@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:31
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-26 00:14:47
+ * @LastEditTime: 2022-03-26 16:05:52
  * @Description: file content
  */
 
@@ -12,7 +12,11 @@ const REJECTED = "rejected";
 
 class MyPromise {
   constructor(executor) {
-    executor(this.resolve, this.reject);
+    try {
+      executor(this.resolve, this.reject);
+    } catch (error) {
+      this.reject(error);
+    }
   }
 
   // promise的初始状态
@@ -35,7 +39,7 @@ class MyPromise {
     // 如果有成功的回调，则调用
     // this.successCallback && this.successCallback(this.value);
     while (this.successCallback.length) {
-      let x = this.successCallback.shift()(this.value);
+      let x = this.successCallback.shift()();
     }
   };
 
@@ -48,51 +52,69 @@ class MyPromise {
     // 如果有失败的回调，则调用
     // this.failCallback && this.failCallback(this.reason);
     while (this.failCallback.length) {
-      this.failCallback.shift()(this.reason);
+      this.failCallback.shift()();
     }
   };
 
   then(successCallback, failCallback) {
+    successCallback = successCallback ? successCallback : (value) => value;
+    failCallback = failCallback ? failCallback : (value) => value;
     let promise2 = new MyPromise((resolve, reject) => {
       // 判断状态
       if (this.status === FULFILLED) {
         setTimeout(() => {
-          let x = successCallback(this.value);
-          // 判断 x 的值是普通值还是promise对象
-          // 如果是普通值 直接调用resolve
-          // 如果是promise对象 查看promsie对象返回的结果
-          // 再根据promise对象返回的结果 决定调用resolve 还是调用reject
-          resolvePromise(promise2, x, resolve, reject);
-        }, 0);
-      } else if (this.status === REJECTED) {
-        setTimeout(() => {
-          let x = failCallback(this.reason);
-          // 判断 x 的值是普通值还是promise对象
-          // 如果是普通值 直接调用resolve
-          // 如果是promise对象 查看promsie对象返回的结果
-          // 再根据promise对象返回的结果 决定调用resolve 还是调用reject
-          resolvePromise(promise2, x, resolve, reject);
-        }, 0);
-      } else {
-        // 等待状态，将成功和失败的回调存储起来
-        this.successCallback.push(() => {
-          setTimeout(() => {
+          try {
             let x = successCallback(this.value);
             // 判断 x 的值是普通值还是promise对象
             // 如果是普通值 直接调用resolve
             // 如果是promise对象 查看promsie对象返回的结果
             // 再根据promise对象返回的结果 决定调用resolve 还是调用reject
             resolvePromise(promise2, x, resolve, reject);
-          }, 0);
-        });
-        this.failCallback.push(() => {
-          setTimeout(() => {
+          } catch (error) {
+            reject(error);
+          }
+        }, 0);
+      } else if (this.status === REJECTED) {
+        setTimeout(() => {
+          try {
             let x = failCallback(this.reason);
             // 判断 x 的值是普通值还是promise对象
             // 如果是普通值 直接调用resolve
             // 如果是promise对象 查看promsie对象返回的结果
             // 再根据promise对象返回的结果 决定调用resolve 还是调用reject
             resolvePromise(promise2, x, resolve, reject);
+          } catch (error) {
+            reject(error);
+          }
+        }, 0);
+      } else {
+        // 等待状态，将成功和失败的回调存储起来
+        this.successCallback.push(() => {
+          setTimeout(() => {
+            try {
+              let x = successCallback(this.value);
+              // 判断 x 的值是普通值还是promise对象
+              // 如果是普通值 直接调用resolve
+              // 如果是promise对象 查看promsie对象返回的结果
+              // 再根据promise对象返回的结果 决定调用resolve 还是调用reject
+              resolvePromise(promise2, x, resolve, reject);
+            } catch (error) {
+              reject(error);
+            }
+          }, 0);
+        });
+        this.failCallback.push(() => {
+          setTimeout(() => {
+            try {
+              let x = failCallback(this.reason);
+              // 判断 x 的值是普通值还是promise对象
+              // 如果是普通值 直接调用resolve
+              // 如果是promise对象 查看promsie对象返回的结果
+              // 再根据promise对象返回的结果 决定调用resolve 还是调用reject
+              resolvePromise(promise2, x, resolve, reject);
+            } catch (error) {
+              reject(error);
+            }
           }, 0);
         });
       }
