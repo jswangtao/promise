@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:31
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-26 16:22:58
+ * @LastEditTime: 2022-03-26 16:47:56
  * @Description: file content
  */
 
@@ -145,6 +145,13 @@ class MyPromise {
         }
       }
     });
+  };
+
+  static resolve = (value) => {
+    if (value instanceof MyPromise) {
+      return value;
+    }
+    return new MyPromise((resolve) => resolve(value));
   };
 }
 

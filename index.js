@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:39
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-26 16:23:13
+ * @LastEditTime: 2022-03-26 16:49:11
  * @Description: file content
  */
 const myPromise = require("./myPromise");
@@ -16,16 +16,7 @@ let p1 = new myPromise((reslove, reject) => {
   // throw new Error("executor error");
 });
 
-let p2 = new myPromise((reslove, reject) => {
-  // reslove("成功");
-  // reject("失败");
-  setTimeout(() => {
-    reslove("成功2");
-  }, 2000);
-  // throw new Error("executor error");
-});
-
-myPromise.all(["a", "b", p1, p2]).then((res) => {
+myPromise.resolve(p1).then((res) => {
   console.log("🚀🚀🚀wimi======>>>res", res);
 });
 
