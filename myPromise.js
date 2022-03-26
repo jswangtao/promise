@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:31
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-26 17:13:47
+ * @LastEditTime: 2022-03-26 17:24:58
  * @Description: file content
  */
 
@@ -57,8 +57,14 @@ class MyPromise {
   };
 
   then(successCallback, failCallback) {
+    // 参数可选
     successCallback = successCallback ? successCallback : (value) => value;
-    failCallback = failCallback ? failCallback : (value) => value;
+    // 参数可选
+    failCallback = failCallback
+      ? failCallback
+      : (reason) => {
+          throw reason;
+        };
     let promise2 = new MyPromise((resolve, reject) => {
       // 判断状态
       if (this.status === FULFILLED) {
@@ -133,6 +139,10 @@ class MyPromise {
         });
       }
     );
+  }
+
+  catch(failCallback) {
+    return this.then(undefined, failCallback);
   }
 
   static all(array) {
