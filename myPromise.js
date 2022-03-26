@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:31
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-26 16:05:52
+ * @LastEditTime: 2022-03-26 16:22:58
  * @Description: file content
  */
 
@@ -121,6 +121,31 @@ class MyPromise {
     });
     return promise2;
   }
+
+  static all = (array) => {
+    let result = [];
+    let index = 0;
+    return new MyPromise((resolve, reject) => {
+      function addData(key, value) {
+        result[key] = value;
+        index++;
+        if (index === array.length) {
+          resolve(result);
+        }
+      }
+      for (let i = 0; i < array.length; i++) {
+        let current = array[i];
+        if (current instanceof MyPromise) {
+          current.then(
+            (value) => addData(i, value),
+            (reason) => reject(reason)
+          );
+        } else {
+          addData(i, current);
+        }
+      }
+    });
+  };
 }
 
 function resolvePromise(promise2, x, resolve, reject) {
