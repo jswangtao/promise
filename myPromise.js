@@ -2,7 +2,7 @@
  * @Author: wangtao
  * @Date: 2022-03-24 23:07:31
  * @LastEditors: 汪滔
- * @LastEditTime: 2022-03-26 16:47:56
+ * @LastEditTime: 2022-03-26 17:13:47
  * @Description: file content
  */
 
@@ -122,7 +122,20 @@ class MyPromise {
     return promise2;
   }
 
-  static all = (array) => {
+  finally(callback) {
+    return this.then(
+      (value) => {
+        return MyPromise.resolve(callback()).then(() => value);
+      },
+      (reason) => {
+        return MyPromise.resolve(callback()).then(() => {
+          throw reason;
+        });
+      }
+    );
+  }
+
+  static all(array) {
     let result = [];
     let index = 0;
     return new MyPromise((resolve, reject) => {
@@ -145,14 +158,14 @@ class MyPromise {
         }
       }
     });
-  };
+  }
 
-  static resolve = (value) => {
+  static resolve(value) {
     if (value instanceof MyPromise) {
       return value;
     }
     return new MyPromise((resolve) => resolve(value));
-  };
+  }
 }
 
 function resolvePromise(promise2, x, resolve, reject) {
