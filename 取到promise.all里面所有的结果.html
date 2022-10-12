@@ -1,0 +1,52 @@
+<!--
+ * @Author: wangtao
+ * @Date: 2022-10-12 11:18:00
+ * @LastEditors: 汪滔
+ * @LastEditTime: 2022-10-12 11:37:03
+ * @Description: file content
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const p1 = new Promise((reslove, reject) => {
+        setTimeout(() => {
+          reslove(1);
+        }, 1000);
+      });
+      const p2 = new Promise((reslove, reject) => {
+        setTimeout(() => {
+          reject(2);
+        }, 5000);
+      });
+
+      function wrapPromise(promise) {
+        return new Promise((reslove, reject) => {
+          promise.then(
+            (success) => {
+              reslove({ success });
+            },
+            (error) => {
+              reslove({ error });
+            }
+          );
+        });
+      }
+
+      Promise.all([wrapPromise(p1), wrapPromise(p2)]).then(
+        (res) => {
+          console.log("🚀🚀🚀wimi======>>>res", res);
+        },
+        (error) => {
+          console.log("🚀🚀🚀wimi======>>>error", error);
+        }
+      );
+    </script>
+  </body>
+</html>
