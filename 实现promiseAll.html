@@ -1,0 +1,50 @@
+<!--
+ * @Author: wangtao
+ * @Date: 2022-10-12 11:18:00
+ * @LastEditors: 汪滔
+ * @LastEditTime: 2022-10-13 23:55:34
+ * @Description: file content
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function promiseAll(arr) {
+        let successArr = [];
+        let index = 0;
+        return new Promise((reslove, reject) => {
+          for (let i = 0; i < arr.length; i++) {
+            arr[i].then(
+              (res) => {
+                index++;
+                successArr.push(res);
+                if (index === arr.length) {
+                  reslove(successArr);
+                }
+              },
+              (error) => {
+                reject(error);
+              }
+            );
+          }
+        });
+      }
+
+      let p1 = Promise.resolve(1);
+      let p2 = new Promise((reslove, reject) => {
+        setTimeout(() => {
+          reslove(2);
+        }, 1000);
+      });
+      promiseAll([p1, p2]).then((res) => {
+        console.log("🚀🚀🚀wimi======>>>res", res);
+      });
+    </script>
+  </body>
+</html>
